@@ -29,7 +29,9 @@
     "grunt-contrib-jshint": "~0.10.0",
     "grunt-contrib-watch": "~0.6.1",
     "grunt-bower-task": "~0.3.4",
-    "grunt-karma": "~0.8.0"
+    "grunt-karma": "~0.8.0",
+	"nodemailer":"",
+	"nodemailer-smtp-transport":""
    
   },"scripts": {
     "start": "node app.node.js"
