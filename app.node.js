@@ -24,7 +24,7 @@ var transporter = nodemailer.createTransport(smtpTransport({
 		pass:'xjzgezbemjultqas'
 	}
 }));
-console.log(transporter);
+
 var mailOptions = {
 	    from: 'mohitbaveja2011@gmail.com', // sender address
 	    to: 'mohit.baveja@accenture.com', // list of receivers
@@ -40,14 +40,18 @@ app.use(bodyParser.json());
 
 var mongoose = require('mongoose');
 
-//var db = mongoose.connect('mongodb://127.0.0.1:27017/test');
 
-var db = mongoose.connect('mongodb://mohitb:mL@b12#@ds159737.mlab.com:59737/codechecklist');
+var url = process.env.MONGOLAB_URI;
+
+var db = mongoose.connect(url);
+
+console.log(db);
 var codeSchema= new mongoose.Schema({
 	questionId: String,
 	  question: String
 	  
 	});
+
 var loginSchema = new mongoose.Schema({
 	  dname: String,
 	  rname: String,
@@ -62,7 +66,7 @@ var apiSchema = new mongoose.Schema({
 	  comments: {type : Array ,"default" :[] }
 	  
 });
-var Bear = mongoose.model('Bear', codeSchema);
+var question = mongoose.model('question', codeSchema);
 
 var loginDetail = mongoose.model('loginDetail', loginSchema);
 
@@ -71,7 +75,7 @@ var apiDetail = mongoose.model('apiDetail', apiSchema);
 
 
 app.get('/questions', function(req, res) {
-	return Bear.find().limit(5).exec(function(err,questions){
+	return question.find().limit().exec(function(err,questions){
 		if (!err) {
 			  
 			  res.header('Access-Control-Allow-Origin', '*');
@@ -89,14 +93,17 @@ app.get('/questions', function(req, res) {
 
 // create a bear (accessed at POST http://localhost:8080/api/bears)
 app.post('/questions',function(req, res) {
-	
-	for(var i=0;i<req.body.length;i++){
-		var bear = new Bear();      // create a new instance of the Bear model
-		bear.question = req.body[i].question;
-	    bear.questionId = req.body[i].questionId;// set the bears name (comes from the request)
+	res.header('Access-Control-Allow-Origin', '*');
+	 res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+	var questionArr=req.body.questionArr;
+	console.log(questionArr.length);
+	for(var i=0; i< questionArr.length;i++){
+		var questions = new question();      // create a new instance of the Bear model
+		questions.question = req.body.questionArr[i].questions;
+		questions.questionId = req.body.questionArr[i].questionId;// set the bears name (comes from the request)
 	    
 	    //Save it in databse
-	    bear.save(function(err) {
+		questions.save(function(err) {
 	    	if (!err) {
 	    	      return console.log("created");
 	    	    } else {
